@@ -70,3 +70,48 @@ header img {
 .sendArrow{
   height:25px;
 }
+
+.message{
+  color: white;
+  background: black;
+  margin: 5px;
+  border-radius:5px;
+  padding:10px;
+}
+
+.allMessages{
+  margin-top:48px;
+  margin-bottom:48px;
+  max-height: 675px;
+  width: 100%;
+  color: blue;
+  display:flex;
+  flex-direction:column-reverse;
+  overflow-y:scroll;
+}
+
+/*box might look weird because calc isn't working
+I think there is something that you need to download
+in order to use calc*/
+
+.login{
+  position:relative;
+  display:flex;
+  /*margin-left:70%;*/
+  justify-content: flex-end;
+}
+
+.submitName{
+  background-color:rgba(0,0,0,0);
+  color: white;
+  padding:3px;
+}
+
+.inputName{
+  color:white;
+  border-radius:10px;
+  border: none;
+  padding:4px;
+  background-color:rgba(0,0,0,0);
+  width: 80px;
+}

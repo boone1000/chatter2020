@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
-import NamePicker from './namePicker.js'
+import NamePicker from './namePicker.js';
 
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
       />
       Talkie 
     </div>
-    <NamePicker onSend={(userName)=>{setName()}}/>
+    <NamePicker onSave={(userName)=>{setName()}}/>
   </header>
 
   <div className="allMessages">

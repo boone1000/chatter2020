@@ -1,21 +1,29 @@
 import React, {useState} from 'react';
+import { FiEdit, FiSave } from 'react-icons/fi';
 
-function NamePicker(username) {
-    const[editName, setEditName] = useState(false)
+function NamePicker(props) {
+    const[showName, setShowName] = useState(false)
     const[name, setName] = useState('')
 
     return <div className='login'>
         <input className='inputName'
             value={name} 
             placeholder='Set Username'
-            onChange={e=> setName(e.target.value)}>
+            style={{display: showName ? 'none' : 'flex'}}
+            onChange={e=> setName(e.target.value)}
+            onKeyPress={e=>{
+                if (e.key==='Enter') props.onSave(name)
+            }}>
         </input>
+
+        {showName && <div>{name}</div>}
+
         <button className='submitName'
             onClick={()=>{
-                username.onSend(name)
-                setName('')
+                if(name) props.onSave(name)
+                setShowName(!showName) /*this makes it toggle */
             }}>
-            OK
+            {showName ? <FiEdit/> : <FiSave />}
         </button>
     </div>
 }

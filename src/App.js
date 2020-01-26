@@ -1,13 +1,25 @@
-import React, {useState} from 'react';
-import logo from './logo.svg';
+import React, {useState, useEffect} from 'react';
 import './App.css';
-import NamePicker from './namePicker.js';
-
+import NamePicker from './namePicker';
+import {db, useDB} from './dp';
+import { BrowserRouter, Route } from 'react-router-dom';
 
 function App() {
-  const [messages, setMessages] = useState([])
-  const [userName, setName] = useState('')
-  console.log(messages)
+  useEffect(()=>{
+    const {pathname} = window.location
+    if(pathname.length<2) window.location.pathname='home'
+  }, [])
+
+  return <BrowserRouter>
+    <Route path='/:room' component={Room}/>
+  </BrowserRouter>
+}
+
+function Room(props) {
+  const {room} = props.match.params
+  const [name, setName] = useState('')
+  const messages = useDB(room)
+
   return <main>
 
   <header> 
@@ -17,17 +29,26 @@ function App() {
       />
       Talkie 
     </div>
-    <NamePicker onSave={(userName)=>{setName()}}/>
+    <NamePicker onSave={setName}/>
   </header>
 
-  <div className="allMessages">
-    {/* messages */}
-    {messages.map((m,i)=>{
-    return<div key={i} className='message'>{m}</div>
-    })}
-  </div>
+  <div className="messages">
+      {messages.map((m,i)=>{
+        return <div key={i} className="message-wrap"
+          from={m.name===name?'me':'you'}>
+          <div className="message">
+            <div className="msg-name">{m.name}</div>
+            <div className="msg-text">{m.text}</div>
+          </div>
+        </div>
+      })}
+    </div>
 
-  <TextInput onSend={(text)=>{setMessages([text, ...messages])}}/>
+    <TextInput onSend={(text)=> {
+      db.send({
+        text, name, ts: new Date(), room
+      })
+    }} />
 
   </main>
 }

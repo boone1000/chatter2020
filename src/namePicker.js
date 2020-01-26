@@ -1,30 +1,46 @@
-import React, {useState} from 'react';
-import { FiEdit, FiSave } from 'react-icons/fi';
+import React, {useState, useRef, useEffect} from 'react'
+import { FiEdit, FiSave } from 'react-icons/fi'
 
 function NamePicker(props) {
-    const[showName, setShowName] = useState(false)
-    const[name, setName] = useState('')
+  const [name, setName] = useState('')
+  const [showName, setShowName] = useState(false)
+  const inputEl = useRef(null)
 
-    return <div className='login'>
-        <input className='inputName'
-            value={name} 
-            placeholder='Set Username'
-            style={{display: showName ? 'none' : 'flex'}}
-            onChange={e=> setName(e.target.value)}
-            onKeyPress={e=>{
-                if (e.key==='Enter') props.onSave(name)
-            }}>
-        </input>
+  function save(){
+    setTimeout(()=>{
+      inputEl.current.focus()
+    },50)
+    if(name && !showName) {
+      props.onSave(name)
+      localStorage.setItem('name',name)
+    }
+    setShowName(!showName)
+  }
 
-        {showName && <div>{name}</div>}
+  useEffect(()=>{
+    const n = localStorage.getItem('name')
+    if(n) {
+      setName(n)
+      save() 
+    }
+  }, [])
 
-        <button className='submitName'
-            onClick={()=>{
-                if(name) props.onSave(name)
-                setShowName(!showName) /*this makes it toggle */
-            }}>
-            {showName ? <FiEdit/> : <FiSave />}
-        </button>
-    </div>
+  return <div className="edit-username">
+    <input value={name} ref={inputEl}
+      className="name-input"
+      style={{display: showName ? 'none' : 'flex'}}
+      onChange={e=> setName(e.target.value)}
+      onKeyPress={e=> {
+        if(e.key==='Enter') save()
+      }}
+    />
+
+    {showName && <div>{name}</div>}
+
+    <button onClick={save} className="name-button">
+      {showName ? <FiEdit /> : <FiSave />}
+    </button>
+  </div>
 }
-export default NamePicker 
+
+export default NamePicker

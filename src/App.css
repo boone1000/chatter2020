@@ -82,7 +82,7 @@ header img {
   padding:10px;
 }
 
-.allMessages{
+.messages{
   margin-top:48px;
   margin-bottom:48px;
   max-height: 675px;
@@ -91,6 +91,16 @@ header img {
   display:flex;
   flex-direction:column-reverse;
   overflow-y:scroll;
+}
+
+.message-wrap{
+  width:100%;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.message-wrap[from='me']{
+  justify-content:flex-end;
 }
 
 /*box might look weird because calc isn't working

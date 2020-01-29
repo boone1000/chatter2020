@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
+import './media.css';
 import NamePicker from './namePicker';
 import {db, useDB} from './dp';
 import { BrowserRouter, Route } from 'react-router-dom';

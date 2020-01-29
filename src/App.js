@@ -23,15 +23,22 @@ function Room(props) {
   const {room} = props.match.params
   const [name, setName] = useState('')
   const messages = useDB(room)
-  const [showCamera, setShowCamera] = useState(false) //
+  const [showCamera, setShowCamera] = useState(false) 
+
+  async function takePicture(img) { //async means you can use "await"
+    setShowCamera(false)
+    const imgID = Math.random().toString(36).substring(7)
+    var storageRef = firebase.storage().ref() 
+    var ref = storageRef.child(imgID + '.jpg') 
+    await ref.putString(img, 'data_url')  
+    db.send({ 
+      img: imgID, name, ts: new Date(), room }) 
+  }
 
 
   return <main>
 
   {showCamera && <Camera takePicture={takePicture}/>}
-  {// takePicture is from the documentation from Evan's component 
-  //that we downloaded
-  }
 
   <header> 
     <div className="headerDiv">
@@ -44,43 +51,42 @@ function Room(props) {
   </header>
 
   <div className="messages">
-      {messages.map((m,i)=>{
-        return <div key={i} className="message-wrap"
-          from={m.name===name?'me':'you'}>
-          <div className="message">
-            <div className="msg-name">{m.name}</div>
-            <div className="msg-text">{m.text}</div>
-          </div>
-        </div>
-      })}
+      {messages.map((m,i)=> <Message key={i} 
+        m={m} name={name} 
+      />)}
     </div>
 
-    <TextInput 
-      showCamera={()=>setShowCamera(true)}
-      // need () to set argument to true. but to make it not go over and 
-      // over again we need to make a new function, which is why we need 
-      // to use the ()=> to initialize a new function
-      //never just put a new function name with parenthesis because it will loop
-      onSend={(text)=> {
-        db.send({
-          text, name, ts: new Date(), room
-        })
-      }}
-    />
+  <TextInput 
+    showCamera={()=>setShowCamera(true)}
+    // need () to set argument to true. but to make it not go over and 
+    // over again we need to make a new function, which is why we need 
+    // to use the ()=> to initialize a new function
+    //never just put a new function name with parenthesis because it will loop
+    onSend={(text)=> {
+      db.send({
+        text, name, ts: new Date(), room
+      })
+    }}
+  />
 
   </main>
 }
 
-async function takePicture(img) { //async means you can use "await"
-  setShowCamera(false)
-  const imgID = Math.random().toString(36).substring(7) //generate image id
-  var storageRef = firebase.storage().ref() // makes a reference in firebase
-  var ref = storageRef.child(imgID + '.jpg') // creates a child of the reference
-  await ref.putString(img, 'data_url')  // uploads the image, specify type
-  // 'await' waits for the line of code to be done before you get to the next one 
-  // ^ puts the picture in the firebase
-  db.send({ img: imgID, name, ts: new Date(), room }) // sends a picture to the database that includes
-  // an image instead of text
+const bucket = 'https://firebasestorage.googleapis.com/v0/b/chatter2020-c2802.appspot.com/o/'
+const suffix = '.jpg?alt=media'
+
+function Message({m, name}){
+  return <div className="message-wrap"
+    from={m.name===name?'me':'you'}
+    onClick={()=>console.log(m)}>
+    <div className="message">
+      <div className="msg-name">{m.name}</div>
+      <div className="msg-text">
+        {m.text}
+        {m.img && <img src={bucket + m.img + suffix} alt="pic" />}
+      </div>
+    </div>
+  </div>
 }
 
 function TextInput(props){
@@ -108,3 +114,8 @@ function TextInput(props){
 }
 
 export default App;
+
+
+// npm run build
+// firebase deploy
+// then refresh firebase in

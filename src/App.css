@@ -82,30 +82,74 @@ header img {
   padding:10px;
 }
 
+/*
 .messages{
-  margin-top:48px;
-  margin-bottom:48px;
-  max-height: 675px;
   width: 100%;
   color: blue;
-  display:flex;
-  flex-direction:column-reverse;
-  overflow-y:scroll;
 }
+
 
 .message-wrap{
   width:100%;
   display: flex;
   justify-content: flex-start;
+  max-height: 675px;
+  display:flex;
+  flex-direction:column-reverse;
+  overflow-y:scroll;
+  margin-top:48px;
+  margin-bottom:48px;
 }
 
 .message-wrap[from='me']{
   justify-content:flex-end;
 }
 
+*/
+
 /*box might look weird because calc isn't working
 I think there is something that you need to download
 in order to use calc*/
+
+.messages{
+  height:calc(100% - 96px);
+  width:100vw;
+  position: absolute;
+  top:48px;
+  left:0px;
+  display:flex;
+  flex-direction: column-reverse;
+  overflow-y:auto;
+}
+.message-wrap{
+  width:100%;
+  display:flex;
+  justify-content: flex-start;
+  flex-shrink:0;
+}
+.message-wrap[from="me"]{
+  justify-content: flex-end;
+}
+
+.message{
+  position: relative;
+  margin-top:10px;
+  padding: 0 10px;
+}
+.msg-text{
+  color:white;
+  background:black;
+  margin:5px;
+  border-radius:5px;
+  padding:3px 6px;
+  display: inline-block;
+}
+.msg-name{
+  font-size:11px;
+  position:absolute;
+  top:-15px;
+  left:5px;
+}
 
 .login{
   position:relative;

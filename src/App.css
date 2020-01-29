@@ -51,7 +51,7 @@ header img {
   position: absolute;
   margin-left: 3%;
   margin-right: 3%;
-  width: 95%;
+  width: calc(100% - 50px);
   padding: 7px;
   margin-top: 7px;
   border-radius: 15px;

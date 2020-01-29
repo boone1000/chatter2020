@@ -4,7 +4,9 @@ import NamePicker from './namePicker';
 import {db, useDB} from './dp';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { FiSend, FiCamera } from 'react-icons/fi';
-// import Camera from 'react-snap-pic';
+import Camera from 'react-snap-pic';
+import * as firebase from "firebase/app"
+import "firebase/storage";
 
 function App() {
   useEffect(()=>{
@@ -21,10 +23,15 @@ function Room(props) {
   const {room} = props.match.params
   const [name, setName] = useState('')
   const messages = useDB(room)
-  const [showCamera, setShowCamera] = useState(false)
+  const [showCamera, setShowCamera] = useState(false) //
 
 
   return <main>
+
+  {showCamera && <Camera takePicture={takePicture}/>}
+  {// takePicture is from the documentation from Evan's component 
+  //that we downloaded
+  }
 
   <header> 
     <div className="headerDiv">
@@ -48,31 +55,41 @@ function Room(props) {
       })}
     </div>
 
-    <TextInput onSend={(text)=> {
-      db.send({
-        text, name, ts: new Date(), room
-      })
-    }}
-    sendMessage={text=> props.onSend(text)}
-    showCamera={()=>setShowCamera(true)}
+    <TextInput 
+      showCamera={()=>setShowCamera(true)}
+      // need () to set argument to true. but to make it not go over and 
+      // over again we need to make a new function, which is why we need 
+      // to use the ()=> to initialize a new function
+      //never just put a new function name with parenthesis because it will loop
+      onSend={(text)=> {
+        db.send({
+          text, name, ts: new Date(), room
+        })
+      }}
     />
 
   </main>
 }
 
-function takePicture(){
-  takePicture = (img) => {
-    console.log(img)
-}
+async function takePicture(img) { //async means you can use "await"
+  setShowCamera(false)
+  const imgID = Math.random().toString(36).substring(7) //generate image id
+  var storageRef = firebase.storage().ref() // makes a reference in firebase
+  var ref = storageRef.child(imgID + '.jpg') // creates a child of the reference
+  await ref.putString(img, 'data_url')  // uploads the image, specify type
+  // 'await' waits for the line of code to be done before you get to the next one 
+  // ^ puts the picture in the firebase
+  db.send({ img: imgID, name, ts: new Date(), room }) // sends a picture to the database that includes
+  // an image instead of text
 }
 
 function TextInput(props){
   var [text, setText] = useState('')
   return<div className="textInput">
-    <button onClick={props.showCamera}
-    style={{left:10, right:'auto'}}
+    <button onClick={props.showCamera} // when you click the button, run function props.showCamera
+    style={{left:10, right:'auto'}} //
     > 
-    <FiCamera style={{height:15, width:15}} />
+    <FiCamera style={{height:15, width:15}} /> 
     </button>
     <input className="typeBox"value={text}
       placeholder='type message here...'
